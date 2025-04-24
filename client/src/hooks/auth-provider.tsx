@@ -1,6 +1,5 @@
-
 import { createContext, useState, useEffect, ReactNode } from 'react';
-import { login, getUser } from '@/lib/api';
+import { login, getUser, logout as apiLogout } from '@/lib/api';
 
 // Define the shape of the user object
 export interface User {
@@ -29,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if user is already logged in
     const checkAuth = async () => {
-      if (isAuthenticated()) {
+      if (isAuthenticated()) { // isAuthenticated function needs to be defined elsewhere and imported
         try {
           const userData = await getUser();
           if (userData) {
@@ -38,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (error) {
           console.error('Errore durante la verifica dell\'autenticazione:', error);
           // In caso di errore, rimuoviamo il token non valido
-          await logout();
+          await apiLogout(); // using apiLogout from import
         }
       }
       setIsLoading(false);
@@ -66,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logoutUser = async () => {
     setIsLoading(true);
     try {
-      await logout();
+      await apiLogout();
       setUser(null);
     } catch (error) {
       console.error('Errore durante il logout:', error);
@@ -85,3 +84,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
+// Placeholder for isAuthenticated - needs to be implemented elsewhere and imported.
+const isAuthenticated = () => {
+    // Implement your authentication check here.  e.g., check for a token in local storage.
+    return false; //Replace with your actual authentication logic
+};

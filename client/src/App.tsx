@@ -10,7 +10,7 @@ import PreferencesPage from "@/pages/preferences-page";
 import BookingsPage from "@/pages/bookings-page";
 import ResultsPage from "@/pages/results-page";
 import NotFound from "@/pages/not-found";
-import { AuthProvider } from "@/hooks/auth-provider";
+import { AuthProvider } from "@/hooks/use-auth";
 
 export default function App() {
   return (
