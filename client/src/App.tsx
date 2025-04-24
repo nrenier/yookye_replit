@@ -1,43 +1,48 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { Router, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/not-found";
+import MainLayout from "@/components/layouts/main-layout";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
-import PreferencesPage from "@/pages/preferences-page";
-import ResultsPage from "@/pages/results-page";
+import ProtectedRoute from "@/lib/protected-route";
 import PackageDetailPage from "@/pages/package-detail-page";
+import PreferencesPage from "@/pages/preferences-page";
 import BookingsPage from "@/pages/bookings-page";
-import { AuthProvider } from "@/hooks/use-auth";
-import { ProtectedRoute } from "@/lib/protected-route";
+import ResultsPage from "@/pages/results-page";
+import NotFound from "@/pages/not-found";
+import { login } from "@/lib/api";
 
-function Router() {
+export default function App() {
+  // Effettua il login all'avvio dell'applicazione
+  useEffect(() => {
+    const performLogin = async () => {
+      try {
+        await login();
+        console.log("Login effettuato con successo");
+      } catch (error) {
+        console.error("Errore durante il login automatico:", error);
+      }
+    };
+
+    performLogin();
+  }, []);
+
   return (
-    <Switch>
-      <Route path="/" component={HomePage} />
-      <Route path="/auth" component={AuthPage} />
-      <ProtectedRoute path="/preferences" component={PreferencesPage} />
-      <ProtectedRoute path="/results" component={ResultsPage} />
-      <ProtectedRoute path="/package/:id" component={PackageDetailPage} />
-      <ProtectedRoute path="/bookings" component={BookingsPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <Router>
+      <MainLayout>
+        <Route path="/" component={HomePage} />
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/packages/:id" component={PackageDetailPage} />
+        <Route path="/preferences" component={PreferencesPage} />
+        <Route path="/results" component={ResultsPage} /> {/* Added ResultsPage route */}
+        <Route path="/bookings">
+          <ProtectedRoute>
+            <BookingsPage />
+          </ProtectedRoute>
+        </Route>
+        <Route component={NotFound} />
+      </MainLayout>
+      <Toaster />
+    </Router>
   );
 }
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
-}
-
-export default App;

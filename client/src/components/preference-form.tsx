@@ -126,17 +126,102 @@ export default function PreferenceForm() {
     setShowTravelDetails(value === "si");
   };
 
-  const onSubmit = (data: FormValues) => {
-    toast({
-      title: "Preferenze inviate",
-      description: "Le tue preferenze sono state inviate con successo. Ti contatteremo presto!",
-    });
+  const onSubmit = async (data: FormValues) => {
+    try {
+      // Formatta i dati secondo lo schema AccommodationSearchInput richiesto dall'API
+      const formattedData = {
+        luoghi_da_non_perdere: {
+          city: data.luoghiDaNonPerdere === "si" ? data.luoghiSpecifici || "Italia" : "Italia",
+          luoghi_specifici: data.luoghiDaNonPerdere === "si"
+        },
+        viaggiatori: {
+          adults_number: Number(data.numAdulti),
+          children_number: data.numBambini,
+          baby_number: data.numNeonati
+        },
+        date: {
+          check_in_time: data.checkInDate.toISOString().split('T')[0],
+          check_out_time: data.checkOutDate.toISOString().split('T')[0]
+        },
+        budget_per_persona_giorno: {
+          economico: data.budget === "economy",
+          fascia_media: data.budget === "mid_range",
+          comfort: data.budget === "comfort",
+          lusso: data.budget === "lusso",
+          ultra_lusso: false
+        },
+        sistemazione: {
+          livello: {
+            fascia_media: data.livelloSistemazione === "media",
+            boutique: data.livelloSistemazione === "boutique",
+            eleganti: data.livelloSistemazione === "lusso"
+          },
+          tipologia: {
+            hotel: data.tipologiaSistemazione.includes("hotel"),
+            "b&b": data.tipologiaSistemazione.includes("bb"),
+            agriturismo: data.tipologiaSistemazione.includes("agriturismo"),
+            villa: data.tipologiaSistemazione.includes("villa"),
+            appartamento: data.tipologiaSistemazione.includes("appartamento"),
+            glamping: data.tipologiaSistemazione.includes("glamping")
+          }
+        },
+        esigenze_particolari: data.serviziSpeciali,
+        interessi: {
+          storia_e_arte: {
+            musei_e_gallerie: data.passioni.includes("musei"),
+            siti_archeologici: data.passioni.includes("archeologia"),
+            monumenti_e_architettura: data.passioni.includes("architettura")
+          },
+          Food_&_wine: {
+            visite_alle_cantine: data.passioni.includes("cantine"),
+            corsi_di_cucina: data.passioni.includes("corsi_cucina"),
+            soggiorni_nella_wine_country: data.passioni.includes("wine_country")
+          },
+          vacanze_attive: {
+            trekking_di_più_giorni: data.passioni.includes("trekking"),
+            tour_in_e_bike_di_più_giorni: data.passioni.includes("ebike"),
+            sci_snowboard_di_più_giorni: data.passioni.includes("sci")
+          },
+          vita_locale: data.passioni.includes("local_life"),
+          salute_e_benessere: data.passioni.includes("benessere")
+        },
+        tipologia_viaggiatore: {
+          family: data.tipologiaViaggiatore === "famiglia",
+          amici: data.tipologiaViaggiatore === "amici",
+          coppia: data.tipologiaViaggiatore === "coppia",
+          single: data.tipologiaViaggiatore === "single"
+        },
+        ritmo_ideale: {
+          veloce: data.ritmoViaggio === "veloce",
+          moderato: data.ritmoViaggio === "moderato",
+          rilassato: data.ritmoViaggio === "rilassato"
+        }
+      };
 
-    console.log(data);
-    // Qui potete inviare i dati al backend
+      // Importa la funzione di ricerca
+      const { searchAccommodations } = await import("@/lib/api");
+      
+      // Invia la richiesta all'API
+      const response = await searchAccommodations(formattedData);
+      
+      // Mostra un toast di successo
+      toast({
+        title: "Preferenze inviate",
+        description: "Le tue preferenze sono state inviate con successo. Job ID: " + response.job_id,
+      });
 
-    // Reindirizza alla home dopo l'invio
-    setTimeout(() => navigate("/"), 2000);
+      // Reindirizza alla home dopo l'invio
+      setTimeout(() => navigate(`/results?jobId=${response.job_id}`), 2000);
+    } catch (error) {
+      console.error("Errore durante l'invio del form:", error);
+      
+      // Mostra un toast di errore
+      toast({
+        title: "Errore",
+        description: "Si è verificato un errore durante l'invio delle preferenze. Riprova più tardi.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Lista delle opzioni per le passioni
