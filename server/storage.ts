@@ -8,7 +8,7 @@ import session from "express-session";
 import createMemoryStore from "memorystore";
 import connectPg from "connect-pg-simple";
 import { db, pool } from "./db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 
 const MemoryStore = createMemoryStore(session);
 const PostgresSessionStore = connectPg(session);
@@ -116,9 +116,12 @@ export class DatabaseStorage implements IStorage {
   
   async getTravelPackagesByCategory(category: string): Promise<TravelPackage[]> {
     try {
-      // PostgreSQL arrays use a different syntax for containment checks
-      const sql = `SELECT * FROM travel_packages WHERE $1 = ANY(categories)`;
-      const result = await db.execute(sql, [category]);
+      // Implementazione alternativa usando raw SQL con prepared statement
+      const query = `
+        SELECT * FROM travel_packages 
+        WHERE $1 = ANY(categories)
+      `;
+      const result = await pool.query(query, [category]);
       return result.rows as TravelPackage[];
     } catch (error) {
       console.error("Error fetching travel packages by category:", error);

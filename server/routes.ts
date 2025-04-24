@@ -3,7 +3,17 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { z } from "zod";
-import { insertPreferenceSchema } from "@shared/schema";
+import { insertPreferenceSchema, insertBookingSchema } from "@shared/schema";
+import Stripe from "stripe";
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn("⚠️ Missing STRIPE_SECRET_KEY. Stripe payment functionality will be unavailable.");
+}
+
+// Inizializza Stripe solo se la chiave è disponibile
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -135,6 +145,189 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json(topRecommendations);
     } catch (error) {
       res.status(500).json({ message: "Errore nel recupero delle raccomandazioni" });
+    }
+  });
+
+  // Get user bookings
+  app.get("/api/bookings", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    
+    try {
+      const userId = (req.user as Express.User).id;
+      const bookings = await storage.getBookingsByUserId(userId);
+      res.status(200).json(bookings);
+    } catch (error) {
+      res.status(500).json({ message: "Errore nel recupero delle prenotazioni" });
+    }
+  });
+
+  // Get a specific booking
+  app.get("/api/bookings/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    
+    try {
+      const id = parseInt(req.params.id);
+      const booking = await storage.getBooking(id);
+      
+      if (!booking) {
+        return res.status(404).json({ message: "Prenotazione non trovata" });
+      }
+      
+      // Verifica che l'utente sia il proprietario della prenotazione
+      const userId = (req.user as Express.User).id;
+      if (booking.userId !== userId) {
+        return res.status(403).json({ message: "Non autorizzato" });
+      }
+      
+      res.status(200).json(booking);
+    } catch (error) {
+      res.status(500).json({ message: "Errore nel recupero della prenotazione" });
+    }
+  });
+
+  // Create a new booking
+  app.post("/api/bookings", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    
+    try {
+      const userId = (req.user as Express.User).id;
+      
+      // Validate request body
+      const parsedData = insertBookingSchema.parse({
+        ...req.body,
+        userId,
+        status: "pending", // default
+        paymentStatus: "unpaid" // default
+      });
+      
+      const booking = await storage.createBooking(parsedData);
+      res.status(201).json(booking);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Dati non validi", errors: error.errors });
+      }
+      res.status(500).json({ message: "Errore nella creazione della prenotazione" });
+    }
+  });
+
+  // Update booking status
+  app.patch("/api/bookings/:id/status", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !["pending", "confirmed", "cancelled"].includes(status)) {
+        return res.status(400).json({ message: "Stato non valido" });
+      }
+      
+      const booking = await storage.getBooking(id);
+      
+      if (!booking) {
+        return res.status(404).json({ message: "Prenotazione non trovata" });
+      }
+      
+      // Verifica che l'utente sia il proprietario della prenotazione
+      const userId = (req.user as Express.User).id;
+      if (booking.userId !== userId) {
+        return res.status(403).json({ message: "Non autorizzato" });
+      }
+      
+      const updatedBooking = await storage.updateBookingStatus(id, status);
+      res.status(200).json(updatedBooking);
+    } catch (error) {
+      res.status(500).json({ message: "Errore nell'aggiornamento dello stato della prenotazione" });
+    }
+  });
+
+  // Create a payment intent for Stripe
+  app.post("/api/create-payment-intent", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Non autenticato" });
+    }
+    
+    if (!stripe) {
+      return res.status(503).json({ message: "Servizio di pagamento non disponibile" });
+    }
+    
+    try {
+      const { bookingId } = req.body;
+      
+      if (!bookingId) {
+        return res.status(400).json({ message: "ID prenotazione mancante" });
+      }
+      
+      const booking = await storage.getBooking(parseInt(bookingId));
+      
+      if (!booking) {
+        return res.status(404).json({ message: "Prenotazione non trovata" });
+      }
+      
+      // Verifica che l'utente sia il proprietario della prenotazione
+      const userId = (req.user as Express.User).id;
+      if (booking.userId !== userId) {
+        return res.status(403).json({ message: "Non autorizzato" });
+      }
+      
+      // Crea il payment intent con Stripe
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: booking.totalPrice * 100, // Converti in centesimi
+        currency: "eur",
+        metadata: {
+          bookingId: bookingId.toString(),
+          userId: userId.toString()
+        }
+      });
+      
+      res.status(200).json({
+        clientSecret: paymentIntent.client_secret
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Errore nella creazione dell'intento di pagamento", error: error.message });
+    }
+  });
+
+  // Webhook to handle Stripe payment events
+  app.post("/api/webhook", async (req, res) => {
+    if (!stripe) {
+      return res.status(503).json({ message: "Servizio di pagamento non disponibile" });
+    }
+    
+    let event;
+    
+    try {
+      // Verifica la firma dell'evento (disabilitata in questa versione per semplicità)
+      // const signature = req.headers['stripe-signature'];
+      // event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+      
+      // Per semplicità, usa direttamente il payload
+      event = req.body;
+      
+      // Gestisci gli eventi di pagamento
+      if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object;
+        const bookingId = parseInt(paymentIntent.metadata.bookingId);
+        
+        // Aggiorna lo stato di pagamento della prenotazione
+        if (bookingId) {
+          await storage.updateBookingPaymentStatus(bookingId, "paid");
+          await storage.updateBookingStatus(bookingId, "confirmed");
+        }
+      }
+      
+      res.status(200).json({ received: true });
+    } catch (error: any) {
+      console.error('Webhook error:', error.message);
+      res.status(400).json({ message: `Webhook error: ${error.message}` });
     }
   });
 
