@@ -28,6 +28,11 @@ export const checkOpenSearchConnection = async () => {
     return response.status === 200;
   } catch (error) {
     console.error('Error connecting to OpenSearch:', error);
+    // In development, tollerare errori di connessione per consentire lo sviluppo senza OpenSearch
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Running in development mode without OpenSearch connection');
+      return true;
+    }
     return false;
   }
 };

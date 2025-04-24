@@ -3,7 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   name: text("name"),
@@ -18,8 +18,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const preferences = pgTable("preferences", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
+  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
+  userId: text("user_id").notNull(), // Cambiato da integer a text
   destination: text("destination"),
   specificCity: text("specific_city"),
   departureDate: text("departure_date"),
@@ -40,7 +40,7 @@ export const insertPreferenceSchema = createInsertSchema(preferences).omit({
 });
 
 export const travelPackages = pgTable("travel_packages", {
-  id: serial("id").primaryKey(),
+  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
   title: text("title").notNull(),
   description: text("description"),
   destination: text("destination").notNull(),
@@ -64,9 +64,9 @@ export const insertTravelPackageSchema = createInsertSchema(travelPackages).omit
 
 // Nuova tabella per le prenotazioni
 export const bookings = pgTable("bookings", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  packageId: integer("package_id").notNull().references(() => travelPackages.id),
+  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
+  userId: text("user_id").notNull(), // Cambiato da integer a text
+  packageId: text("package_id").notNull(), // Cambiato da integer a text
   bookingDate: timestamp("booking_date").defaultNow().notNull(),
   travelDate: date("travel_date").notNull(),
   returnDate: date("return_date").notNull(),
