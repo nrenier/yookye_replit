@@ -105,10 +105,10 @@ export default function BookingsPage() {
         title: "Pagamento simulato riuscito",
         description: "In una vera implementazione, questo aprirebbe il modulo di pagamento Stripe.",
       });
-      
+
       // Chiudi il modal e aggiorna lo stato
       setIsPaymentModalOpen(false);
-      
+
       // Aggiorna lo stato della prenotazione
       if (selectedBooking) {
         updateBookingStatusMutation.mutate({
@@ -135,7 +135,7 @@ export default function BookingsPage() {
   const handlePayment = (booking: Booking) => {
     setSelectedBooking(booking);
     setIsPaymentModalOpen(true);
-    
+
     // In una vera implementazione, qui verrebbe creato un payment intent
     // e si aprirebbe il form di Stripe per il pagamento
     createPaymentIntentMutation.mutate(booking.id);
@@ -178,7 +178,7 @@ export default function BookingsPage() {
     <MainLayout>
       <div className="container mx-auto px-4 py-16">
         <h1 className="font-montserrat font-bold text-3xl mb-6">Le tue prenotazioni</h1>
-        
+
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-yookve-red" />
@@ -202,14 +202,16 @@ export default function BookingsPage() {
                       </div>
                     </div>
                   )}
-                  
+
                   <CardHeader>
                     <CardTitle>{travelPackage?.title || "Pacchetto viaggio"}</CardTitle>
                     <CardDescription>
-                      {travelPackage?.destination} - Prenotato il {format(new Date(booking.bookingDate), "d MMMM yyyy", { locale: it })}
+                      {travelPackage?.destination} - Prenotato il {booking.bookingDate 
+                        ? format(new Date(booking.bookingDate), "d MMMM yyyy", { locale: it })
+                        : "Data non disponibile"}
                     </CardDescription>
                   </CardHeader>
-                  
+
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center">
@@ -219,7 +221,7 @@ export default function BookingsPage() {
                           al {format(new Date(booking.returnDate), "d MMMM yyyy", { locale: it })}
                         </span>
                       </div>
-                      
+
                       <div>
                         <p>
                           {booking.numAdults} {booking.numAdults === 1 ? "adulto" : "adulti"}
@@ -232,7 +234,7 @@ export default function BookingsPage() {
                       </div>
                     </div>
                   </CardContent>
-                  
+
                   <CardFooter className="flex justify-between">
                     {booking.status === "pending" && (
                       <>
@@ -258,7 +260,7 @@ export default function BookingsPage() {
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
-                        
+
                         {booking.paymentStatus === "unpaid" && (
                           <Button 
                             className="bg-yookve-red hover:bg-red-700"
@@ -269,13 +271,13 @@ export default function BookingsPage() {
                         )}
                       </>
                     )}
-                    
+
                     {booking.status === "confirmed" && (
                       <Button className="bg-green-600 hover:bg-green-700 ml-auto">
                         Dettagli viaggio
                       </Button>
                     )}
-                    
+
                     {booking.status === "cancelled" && (
                       <p className="text-gray-500 italic">
                         Questa prenotazione è stata cancellata
@@ -303,7 +305,7 @@ export default function BookingsPage() {
           </div>
         )}
       </div>
-      
+
       {/* Modal di pagamento */}
       <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
         <DialogContent>
@@ -313,7 +315,7 @@ export default function BookingsPage() {
               Completa il pagamento per confermare la tua prenotazione.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="py-4">
             {createPaymentIntentMutation.isPending ? (
               <div className="flex flex-col items-center justify-center py-8">
@@ -327,7 +329,7 @@ export default function BookingsPage() {
                   <br />
                   In una vera implementazione, qui verrebbe mostrato il form di pagamento di Stripe.
                 </p>
-                
+
                 <div className="border rounded-md p-4 bg-gray-50">
                   <h3 className="font-semibold mb-2">Dettagli della prenotazione:</h3>
                   {selectedBooking && (
@@ -344,7 +346,7 @@ export default function BookingsPage() {
               </div>
             )}
           </div>
-          
+
           <DialogFooter>
             <Button
               variant="outline"
