@@ -60,7 +60,7 @@ const formSchema = z.object({
   numNeonati: z.string().transform(Number),
 
   // Numero di camere
-  numCamere: z.string().transform(Number).min(1, "È richiesta almeno una camera"),
+  numCamere: z.string().transform(Number).refine(val => val >= 1, "È richiesta almeno una camera"),
 
   // Tipologia di viaggiatore
   tipologiaViaggiatore: z.string(),
