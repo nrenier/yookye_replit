@@ -370,17 +370,31 @@ export class OpenSearchStorage implements IStorage {
   private async seedTravelPackages() {
     try {
       // Check if travel packages already exist
-      const response = await opensearchClient.post(`/${INDEX_TRAVEL_PACKAGES}/_search`, {
-        query: {
-          match_all: {}
-        },
-        size: 1
-      });
+      // Usiamo un approccio più robusto per gestire i potenziali errori
+      let packagesExist = false;
       
-      if (response.data.hits.total.value > 0) {
-        console.log("Travel packages already seeded");
+      try {
+        const response = await opensearchClient.post(`/${INDEX_TRAVEL_PACKAGES}/_search`, {
+          query: {
+            match_all: {}
+          },
+          size: 1
+        });
+        
+        if (response.data.hits.total.value > 0) {
+          console.log("Travel packages already seeded");
+          packagesExist = true;
+        }
+      } catch (checkError) {
+        console.warn("Error checking for existing packages:", checkError);
+        // Non usciamo, continuiamo con il seeding
+      }
+      
+      if (packagesExist) {
         return; // Already seeded
       }
+      
+      console.log("Iniziando il caricamento dei pacchetti di viaggio...");
       
       const packages = [
         {
@@ -512,13 +526,42 @@ export class OpenSearchStorage implements IStorage {
       ];
       
       console.log("Seeding travel packages...");
+      // Implementiamo un retry per ogni pacchetto
       for (const pkg of packages) {
-        await this.createTravelPackage(pkg);
+        try {
+          await this.createTravelPackage(pkg);
+          console.log(`Package "${pkg.title}" successfully seeded`);
+        } catch (pkgError) {
+          // Riproviamo una seconda volta in caso di errore
+          console.warn(`Error seeding package "${pkg.title}", retrying...`, pkgError);
+          try {
+            // Piccola pausa prima di riprovare
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await this.createTravelPackage(pkg);
+            console.log(`Package "${pkg.title}" successfully seeded on second attempt`);
+          } catch (retryError) {
+            console.error(`Failed to seed package "${pkg.title}" after retry:`, retryError);
+          }
+        }
       }
       
-      console.log("Successfully seeded travel packages");
+      // Verifichiamo il successo del seeding
+      try {
+        const verifyResponse = await opensearchClient.post(`/${INDEX_TRAVEL_PACKAGES}/_search`, {
+          query: { match_all: {} },
+          size: 1
+        });
+        
+        if (verifyResponse.data.hits.total.value > 0) {
+          console.log(`Successfully seeded travel packages. Total: ${verifyResponse.data.hits.total.value}`);
+        } else {
+          console.warn("No travel packages found after seeding attempt.");
+        }
+      } catch (verifyError) {
+        console.error("Error verifying travel packages seeding:", verifyError);
+      }
     } catch (error) {
-      console.error("Error seeding travel packages:", error);
+      console.error("Error during travel packages seeding process:", error);
     }
   }
 }
