@@ -171,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id; // Usa l'ID come stringa
       const booking = await storage.getBooking(id);
       
       if (!booking) {
@@ -186,6 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json(booking);
     } catch (error) {
+      console.error("Errore nel recupero della prenotazione:", error);
       res.status(500).json({ message: "Errore nel recupero della prenotazione" });
     }
   });
@@ -234,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id; // Usa l'ID come stringa
       const { status } = req.body;
       
       if (!status || !["pending", "confirmed", "cancelled"].includes(status)) {
@@ -256,6 +257,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedBooking = await storage.updateBookingStatus(id, status);
       res.status(200).json(updatedBooking);
     } catch (error) {
+      console.error("Errore nell'aggiornamento dello stato della prenotazione:", error);
       res.status(500).json({ message: "Errore nell'aggiornamento dello stato della prenotazione" });
     }
   });
@@ -277,7 +279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "ID prenotazione mancante" });
       }
       
-      const booking = await storage.getBooking(parseInt(bookingId));
+      const booking = await storage.getBooking(bookingId);
       
       if (!booking) {
         return res.status(404).json({ message: "Prenotazione non trovata" });
@@ -326,7 +328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Gestisci gli eventi di pagamento
       if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object;
-        const bookingId = parseInt(paymentIntent.metadata.bookingId);
+        const bookingId = paymentIntent.metadata.bookingId;
         
         // Aggiorna lo stato di pagamento della prenotazione
         if (bookingId) {
