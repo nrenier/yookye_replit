@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL base dell'API
-const API_URL = 'https://api.yookye.com'; // Aggiorna questo con l'URL corretto del server API
+const API_URL = '/api'; // Utilizza path relativo per chiamare l'API sul server corrente
 
 // Creazione del client axios
 const apiClient = axios.create({
@@ -26,11 +26,11 @@ apiClient.interceptors.request.use(
 );
 
 // Funzione per effettuare il login
-export const login = async (): Promise<boolean> => {
+export const login = async (username: string, password: string): Promise<any> => {
   try {
     const formData = new URLSearchParams();
-    formData.append('username', 'virtual_expert');
-    formData.append('password', 'HJhx2QWCoU52~v<M9YJ]');
+    formData.append('username', username);
+    formData.append('password', password);
 
     const response = await apiClient.post('/api/auth/token', formData, {
       headers: {
@@ -40,12 +40,27 @@ export const login = async (): Promise<boolean> => {
 
     if (response.data && response.data.access_token) {
       authToken = response.data.access_token;
-      return true;
+      return await getUser(); // Ritorna i dati dell'utente dopo il login
     }
-    return false;
+    throw new Error('Login fallito: token non trovato nella risposta');
   } catch (error) {
     console.error('Errore durante il login:', error);
-    return false;
+    throw error;
+  }
+};
+
+// Funzione per ottenere i dati dell'utente corrente
+export const getUser = async (): Promise<any> => {
+  try {
+    if (!isAuthenticated()) {
+      throw new Error('Utente non autenticato');
+    }
+    
+    const response = await apiClient.get('/api/auth/me');
+    return response.data;
+  } catch (error) {
+    console.error('Errore durante il recupero dei dati utente:', error);
+    throw error;
   }
 };
 

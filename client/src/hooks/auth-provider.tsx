@@ -29,16 +29,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if user is already logged in
     const checkAuth = async () => {
-      try {
-        const userData = await getUser();
-        if (userData) {
-          setUser(userData);
+      if (isAuthenticated()) {
+        try {
+          const userData = await getUser();
+          if (userData) {
+            setUser(userData);
+          }
+        } catch (error) {
+          console.error('Errore durante la verifica dell\'autenticazione:', error);
+          // In caso di errore, rimuoviamo il token non valido
+          await logout();
         }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
-      } finally {
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
     checkAuth();
@@ -51,6 +54,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = await login(username, password);
       setUser(userData);
       return userData;
+    } catch (error) {
+      console.error('Errore durante il login:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -60,8 +66,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logoutUser = async () => {
     setIsLoading(true);
     try {
-      // Implement your logout logic here
+      await logout();
       setUser(null);
+    } catch (error) {
+      console.error('Errore durante il logout:', error);
     } finally {
       setIsLoading(false);
     }
