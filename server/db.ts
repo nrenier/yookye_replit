@@ -53,6 +53,11 @@ opensearchClient.interceptors.response.use(
   }
 );
 
+import dotenv from 'dotenv';
+
+// Carica le variabili d'ambiente dal file .env
+dotenv.config();
+
 // Helper function to check if OpenSearch is available
 export const checkOpenSearchConnection = async () => {
   try {
