@@ -22,7 +22,7 @@ type LoginData = Pick<InsertUser, "username" | "password">;
 export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  
+
   const {
     data: user,
     error,
@@ -110,6 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+import { useContext } from 'react';
+import { AuthContext } from './auth-provider';
+
+// Custom hook to use the auth context
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
