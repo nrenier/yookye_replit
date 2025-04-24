@@ -864,7 +864,7 @@ export default function PreferenceForm() {
                           <RadioGroupItem value="lusso" />
                         </FormControl>
                         <FormLabel className="font-normal">
-                          Lusso, > € 400 a persona/giorno
+                          Lusso, &euro; 400 a persona/giorno
                         </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-3 space-y-0">
