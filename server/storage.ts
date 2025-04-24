@@ -103,15 +103,17 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getTravelPackagesByCategory(category: string): Promise<TravelPackage[]> {
-    // For array contains operation in Postgres
-    return await db
-      .select()
-      .from(travelPackages)
-      .where(
-        // @ts-ignore - The array contains operator works in Postgres
-        // but TypeScript doesn't recognize it directly
-        eq(travelPackages.categories.contains([category]), true)
+    try {
+      // PostgreSQL arrays use a different syntax for containment checks
+      const result = await db.execute(
+        `SELECT * FROM travel_packages WHERE $1 = ANY(categories)`,
+        [category]
       );
+      return result.rows as TravelPackage[];
+    } catch (error) {
+      console.error("Error fetching travel packages by category:", error);
+      return []; // Return empty array on error
+    }
   }
   
   async createTravelPackage(insertTravelPackage: InsertTravelPackage): Promise<TravelPackage> {
