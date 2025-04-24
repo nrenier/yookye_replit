@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import MainLayout from "@/components/layouts/main-layout";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
-import ProtectedRoute from "@/lib/protected-route";
+import { ProtectedRoute } from "@/lib/protected-route";
 import PackageDetailPage from "@/pages/package-detail-page";
 import PreferencesPage from "@/pages/preferences-page";
 import BookingsPage from "@/pages/bookings-page";
@@ -35,11 +35,7 @@ export default function App() {
         <Route path="/packages/:id" component={PackageDetailPage} />
         <Route path="/preferences" component={PreferencesPage} />
         <Route path="/results" component={ResultsPage} /> {/* Added ResultsPage route */}
-        <Route path="/bookings">
-          <ProtectedRoute>
-            <BookingsPage />
-          </ProtectedRoute>
-        </Route>
+        <ProtectedRoute path="/bookings" component={BookingsPage} />
         <Route component={NotFound} />
       </MainLayout>
       <Toaster />
