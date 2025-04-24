@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
@@ -41,6 +42,7 @@ export const getQueryFn: <T>(options: {
     return await res.json();
   };
 
+// Create a client
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -52,17 +54,6 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       retry: false,
-    },
-  },
-});
-import { QueryClient } from '@tanstack/react-query';
-
-// Create a client
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
     },
   },
 });
