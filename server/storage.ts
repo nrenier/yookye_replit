@@ -11,40 +11,53 @@ import { db, pool } from "./db";
 import { eq, and, desc, sql } from "drizzle-orm";
 
 const MemoryStore = createMemoryStore(session);
-const PostgresSessionStore = connectPg(session);
+import { opensearchClient } from './db';
+import session from 'express-session';
+import MemoryStore from 'memorystore';
+
+const MemoryStoreSession = MemoryStore(session);
+
+// Constants for OpenSearch indices
+const INDEX_USERS = 'users';
+const INDEX_PREFERENCES = 'preferences';
+const INDEX_TRAVEL_PACKAGES = 'travel_packages';
+const INDEX_BOOKINGS = 'bookings';
 
 export interface IStorage {
   // User operations
-  getUser(id: number): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  createUser(user: Omit<User, 'id'>): Promise<User>;
   
   // Preference operations
-  getPreference(id: number): Promise<Preference | undefined>;
-  getPreferencesByUserId(userId: number): Promise<Preference[]>;
-  createPreference(preference: InsertPreference): Promise<Preference>;
-  updatePreference(id: number, preference: Partial<InsertPreference>): Promise<Preference>;
+  getPreference(id: string): Promise<Preference | undefined>;
+  getPreferencesByUserId(userId: string): Promise<Preference[]>;
+  createPreference(preference: Omit<Preference, 'id'>): Promise<Preference>;
+  updatePreference(id: string, preference: Partial<Omit<Preference, 'id'>>): Promise<Preference>;
   
   // TravelPackage operations
-  getTravelPackage(id: number): Promise<TravelPackage | undefined>;
+  getTravelPackage(id: string): Promise<TravelPackage | undefined>;
   getTravelPackages(): Promise<TravelPackage[]>;
   getTravelPackagesByCategory(category: string): Promise<TravelPackage[]>;
-  createTravelPackage(travelPackage: InsertTravelPackage): Promise<TravelPackage>;
+  createTravelPackage(travelPackage: Omit<TravelPackage, 'id'>): Promise<TravelPackage>;
   
   // Booking operations
-  getBooking(id: number): Promise<Booking | undefined>;
-  getBookingsByUserId(userId: number): Promise<Booking[]>;
-  createBooking(booking: InsertBooking): Promise<Booking>;
-  updateBookingStatus(id: number, status: string): Promise<Booking>;
-  updateBookingPaymentStatus(id: number, paymentStatus: string): Promise<Booking>;
+  getBooking(id: string): Promise<Booking | undefined>;
+  getBookingsByUserId(userId: string): Promise<Booking[]>;
+  createBooking(booking: Omit<Booking, 'id'>): Promise<Booking>;
+  updateBookingStatus(id: string, status: string): Promise<Booking>;
+  updateBookingPaymentStatus(id: string, paymentStatus: string): Promise<Booking>;
   
   // Session store
   sessionStore: any; // Use 'any' to avoid the type error with session.Store
 }
 
-// DatabaseStorage that replaces MemStorage
-export class DatabaseStorage implements IStorage {
+// Generate a random ID for new documents
+const generateId = () => Math.random().toString(36).substring(2, 15);
+
+// OpenSearchStorage 
+export class OpenSearchStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
