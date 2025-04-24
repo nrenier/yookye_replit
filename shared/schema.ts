@@ -3,7 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
+  id: text("id").primaryKey(), 
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   name: text("name"),
@@ -18,8 +18,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const preferences = pgTable("preferences", {
-  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
-  userId: text("user_id").notNull(), // Cambiato da integer a text
+  id: text("id").primaryKey(), 
+  userId: text("user_id").notNull(), 
   destination: text("destination"),
   specificCity: text("specific_city"),
   departureDate: text("departure_date"),
@@ -40,7 +40,7 @@ export const insertPreferenceSchema = createInsertSchema(preferences).omit({
 });
 
 export const travelPackages = pgTable("travel_packages", {
-  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
+  id: text("id").primaryKey(), 
   title: text("title").notNull(),
   description: text("description"),
   destination: text("destination").notNull(),
@@ -64,9 +64,9 @@ export const insertTravelPackageSchema = createInsertSchema(travelPackages).omit
 
 // Nuova tabella per le prenotazioni
 export const bookings = pgTable("bookings", {
-  id: text("id").primaryKey(), // Cambiato da serial a text per compatibilità con OpenSearch
-  userId: text("user_id").notNull(), // Cambiato da integer a text
-  packageId: text("package_id").notNull(), // Cambiato da integer a text
+  id: text("id").primaryKey(), 
+  userId: text("user_id").notNull(), 
+  packageId: text("package_id").notNull(), 
   bookingDate: timestamp("booking_date").defaultNow().notNull(),
   travelDate: date("travel_date").notNull(),
   returnDate: date("return_date").notNull(),
@@ -75,8 +75,8 @@ export const bookings = pgTable("bookings", {
   numInfants: integer("num_infants").default(0),
   totalPrice: integer("total_price").notNull(),
   specialRequests: text("special_requests"),
-  status: text("status").default("pending").notNull(), // pending, confirmed, cancelled
-  paymentStatus: text("payment_status").default("unpaid").notNull(), // unpaid, paid
+  status: text("status").default("pending").notNull(), 
+  paymentStatus: text("payment_status").default("unpaid").notNull(), 
   contactPhone: text("contact_phone"),
   contactEmail: text("contact_email"),
 });

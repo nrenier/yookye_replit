@@ -300,12 +300,17 @@ export class OpenSearchStorage implements IStorage {
         query: {
           match: { userId: userId }
         },
-        sort: [
-          { bookingDate: { order: "desc" } }
-        ]
+        // Rimuoviamo il sort che può causare errori se bookingDate non è definito correttamente
+        size: 100
       });
       
-      return response.data.hits.hits.map((hit: any) => hit._source as Booking);
+      // Ordina i risultati lato applicazione
+      const bookings = response.data.hits.hits.map((hit: any) => hit._source as Booking);
+      return bookings.sort((a, b) => {
+        const dateA = a.bookingDate ? new Date(a.bookingDate).getTime() : 0;
+        const dateB = b.bookingDate ? new Date(b.bookingDate).getTime() : 0;
+        return dateB - dateA; // Ordine decrescente
+      });
     } catch (error) {
       console.error("Error fetching bookings by userId:", error);
       return [];
@@ -314,7 +319,13 @@ export class OpenSearchStorage implements IStorage {
   
   async createBooking(booking: Omit<Booking, 'id'>): Promise<Booking> {
     const id = generateId();
-    const newBooking = { id, ...booking };
+    // Aggiungiamo la data di prenotazione se non è presente
+    const bookingDate = booking.bookingDate || new Date().toISOString();
+    const newBooking = { 
+      id, 
+      ...booking,
+      bookingDate 
+    };
     
     try {
       await opensearchClient.put(`/${INDEX_BOOKINGS}/_doc/${id}`, newBooking);

@@ -204,12 +204,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         userId,
         status: "pending", // default
-        paymentStatus: "unpaid" // default
+        paymentStatus: "unpaid", // default
+        bookingDate: new Date().toISOString() // Aggiungiamo la data corrente
       });
+      
+      // Verifica che il pacchetto esista
+      const packageId = parsedData.packageId;
+      const travelPackage = await storage.getTravelPackage(packageId);
+      
+      if (!travelPackage) {
+        return res.status(404).json({ message: "Pacchetto di viaggio non trovato" });
+      }
       
       const booking = await storage.createBooking(parsedData);
       res.status(201).json(booking);
     } catch (error) {
+      console.error("Errore nella creazione della prenotazione:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Dati non validi", errors: error.errors });
       }
