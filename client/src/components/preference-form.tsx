@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -38,48 +37,48 @@ import { cn } from "@/lib/utils";
 const formSchema = z.object({
   // Passioni
   passioni: z.array(z.string()).min(1, "Seleziona almeno una passione"),
-  
+
   // Luoghi da non perdere
   luoghiDaNonPerdere: z.string(),
   luoghiSpecifici: z.string().optional(),
-  
+
   // Tipo di destinazioni
   tipoDestinazioni: z.string(),
-  
+
   // Ritmo del viaggio
   ritmoViaggio: z.string(),
-  
+
   // Livello di sistemazione
   livelloSistemazione: z.string(),
-  
+
   // Tipologia di sistemazione
   tipologiaSistemazione: z.array(z.string()).min(1, "Seleziona almeno una tipologia di sistemazione"),
-  
+
   // Numero di viaggiatori
-  numAdulti: z.string().transform(Number).min(1, "È richiesto almeno un adulto"),
+  numAdulti: z.string().transform(Number).refine(val => val >= 1, "È richiesto almeno un adulto"),
   numBambini: z.string().transform(Number),
   numNeonati: z.string().transform(Number),
-  
+
   // Numero di camere
   numCamere: z.string().transform(Number).min(1, "È richiesta almeno una camera"),
-  
+
   // Tipologia di viaggiatore
   tipologiaViaggiatore: z.string(),
-  
+
   // Date del viaggio
   checkInDate: z.date(),
   checkOutDate: z.date(),
-  
+
   // Località di arrivo e partenza
   localitaArrivoPartenza: z.string(),
   dettagliArrivoPartenza: z.string().optional(),
-  
+
   // Budget
   budget: z.string(),
-  
+
   // Servizi speciali
   serviziSpeciali: z.string().optional(),
-  
+
   // Email di contatto
   email: z.string().email("Inserisci un indirizzo email valido"),
 });
@@ -91,7 +90,7 @@ export default function PreferenceForm() {
   const [, navigate] = useLocation();
   const [showSpecificPlaces, setShowSpecificPlaces] = useState(false);
   const [showTravelDetails, setShowTravelDetails] = useState(false);
-  
+
   // Inizializza il form con valori predefiniti
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -114,32 +113,32 @@ export default function PreferenceForm() {
       email: "",
     },
   });
-  
+
   // Gestisce il cambio di luoghi da non perdere
   const handleLuoghiChange = (value: string) => {
     form.setValue("luoghiDaNonPerdere", value);
     setShowSpecificPlaces(value === "si");
   };
-  
+
   // Gestisce il cambio di località di arrivo e partenza
   const handleLocalitaChange = (value: string) => {
     form.setValue("localitaArrivoPartenza", value);
     setShowTravelDetails(value === "si");
   };
-  
+
   const onSubmit = (data: FormValues) => {
     toast({
       title: "Preferenze inviate",
       description: "Le tue preferenze sono state inviate con successo. Ti contatteremo presto!",
     });
-    
+
     console.log(data);
     // Qui potete inviare i dati al backend
-    
+
     // Reindirizza alla home dopo l'invio
     setTimeout(() => navigate("/"), 2000);
   };
-  
+
   // Lista delle opzioni per le passioni
   const passioniOptions = [
     { id: "storia", label: "Storia e arte" },
@@ -158,7 +157,7 @@ export default function PreferenceForm() {
     { id: "local_life", label: "Local Life" },
     { id: "benessere", label: "Salute & Benessere" },
   ];
-  
+
   // Lista delle opzioni per le tipologie di sistemazione
   const sistemazioni = [
     { id: "hotel", label: "Hotel" },
@@ -168,11 +167,11 @@ export default function PreferenceForm() {
     { id: "appartamento", label: "Appartamento" },
     { id: "glamping", label: "Glamping" },
   ];
-  
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold mb-8 text-center">Configura il tuo viaggio</h1>
-      
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Sezione Passioni */}
@@ -223,9 +222,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Luoghi da non perdere */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Hai dei luoghi da non perdere?</h2>
@@ -262,7 +261,7 @@ export default function PreferenceForm() {
                 </FormItem>
               )}
             />
-            
+
             {showSpecificPlaces && (
               <FormField
                 control={form.control}
@@ -283,9 +282,9 @@ export default function PreferenceForm() {
               />
             )}
           </div>
-          
+
           <Separator />
-          
+
           {/* Tipo di destinazioni */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Mete clou o luoghi fuori dagli itinerari più popolari: cosa preferisci?</h2>
@@ -331,9 +330,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Ritmo del viaggio */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Quale di questi descrive il ritmo ideale per il tuo viaggio?</h2>
@@ -379,9 +378,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Livello di sistemazione */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Quale è il livello di sistemazione che preferisci?</h2>
@@ -427,9 +426,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Tipologia di sistemazione */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Quale è la tipologia di sistemazione ideale?</h2>
@@ -478,9 +477,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Numero di viaggiatori e camere */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Numero di viaggiatori</h2>
@@ -512,7 +511,7 @@ export default function PreferenceForm() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="numBambini"
@@ -540,7 +539,7 @@ export default function PreferenceForm() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="numNeonati"
@@ -569,7 +568,7 @@ export default function PreferenceForm() {
                 )}
               />
             </div>
-            
+
             <div className="mt-6">
               <FormField
                 control={form.control}
@@ -600,9 +599,9 @@ export default function PreferenceForm() {
               />
             </div>
           </div>
-          
+
           <Separator />
-          
+
           {/* Tipologia di viaggiatore */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Tipologia di viaggiatore:</h2>
@@ -656,9 +655,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Date del viaggio */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Periodo:</h2>
@@ -704,7 +703,7 @@ export default function PreferenceForm() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="checkOutDate"
@@ -749,9 +748,9 @@ export default function PreferenceForm() {
               />
             </div>
           </div>
-          
+
           <Separator />
-          
+
           {/* Località di arrivo e partenza */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Conosci già le località di arrivo e partenza per questo viaggio?</h2>
@@ -796,7 +795,7 @@ export default function PreferenceForm() {
                 </FormItem>
               )}
             />
-            
+
             {showTravelDetails && (
               <FormField
                 control={form.control}
@@ -817,9 +816,9 @@ export default function PreferenceForm() {
               />
             )}
           </div>
-          
+
           <Separator />
-          
+
           {/* Budget */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Hai in mente un budget specifico per questo viaggio?</h2>
@@ -882,9 +881,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Servizi speciali */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Servizi speciali / Esigenze particolari:</h2>
@@ -905,9 +904,9 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Separator />
-          
+
           {/* Email */}
           <div>
             <h2 className="text-xl font-semibold mb-4">E-mail:</h2>
@@ -928,7 +927,7 @@ export default function PreferenceForm() {
               )}
             />
           </div>
-          
+
           <Button 
             type="submit"
             className="w-full bg-yookve-red hover:bg-red-700 text-white py-6"
