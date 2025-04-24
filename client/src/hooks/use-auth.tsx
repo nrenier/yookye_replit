@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useContext } from "react";
+
+import React, { createContext, ReactNode, useContext } from "react";
 import { login as apiLogin, logout as apiLogout, getUser } from '@/lib/api';
 
 // Define the shape of the user object

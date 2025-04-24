@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Router, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
