@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { useSearchParams } from "wouter";
+import { useSearchParams } from "@/hooks/use-search-params";
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,7 @@ export default function ResultsPage() {
   const [searchParams] = useSearchParams();
   const jobId = searchParams.get("jobId");
   const { toast } = useToast();
-  
+
   const [status, setStatus] = useState<string>("LOADING");
   const [message, setMessage] = useState<string>("Stiamo elaborando la tua richiesta...");
   const [result, setResult] = useState<any>(null);
@@ -118,7 +117,7 @@ export default function ResultsPage() {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{result.accomodation?.description || "Nessuna descrizione disponibile"}</p>
-              
+
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <p className="font-semibold">Tipologia:</p>

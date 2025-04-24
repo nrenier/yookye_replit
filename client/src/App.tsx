@@ -14,6 +14,7 @@ import { AuthProvider } from "@/hooks/auth-provider";
 
 export default function App() {
   return (
+<<<<<<< HEAD:client/src/App.tsx
     <AuthProvider>
       <Router>
         <MainLayout>
@@ -30,5 +31,19 @@ export default function App() {
         <Toaster />
       </Router>
     </AuthProvider>
+=======
+    <Router>
+      <MainLayout>
+        <Route path="/" component={HomePage} />
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/packages/:id" component={PackageDetailPage} />
+        <Route path="/preferences" component={PreferencesPage} />
+        <Route path="/results" component={ResultsPage} /> {/* Added ResultsPage route */}
+        <ProtectedRoute path="/bookings" component={BookingsPage} />
+        <Route component={NotFound} />
+      </MainLayout>
+      <Toaster />
+    </Router>
+>>>>>>> c027b9ee6a1d3f0b289b6859232bbce399c366e5:client/src/BCK_App.tsx
   );
 }
