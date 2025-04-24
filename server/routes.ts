@@ -43,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get a specific travel package
   app.get("/api/travel-packages/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id; // Usa l'ID come stringa senza convertirlo
       const travelPackage = await storage.getTravelPackage(id);
       
       if (!travelPackage) {
@@ -52,6 +52,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(200).json(travelPackage);
     } catch (error) {
+      console.error("Errore nel recupero del pacchetto di viaggio:", error);
       res.status(500).json({ message: "Errore nel recupero del pacchetto di viaggio" });
     }
   });
