@@ -104,6 +104,9 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                     <DropdownMenuItem>
                       <Link href="/results">I miei pacchetti</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link href="/bookings">Le mie prenotazioni</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleLogout}>
                       Logout
                     </DropdownMenuItem>

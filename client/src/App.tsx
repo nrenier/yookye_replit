@@ -8,6 +8,8 @@ import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 import PreferencesPage from "@/pages/preferences-page";
 import ResultsPage from "@/pages/results-page";
+import PackageDetailPage from "@/pages/package-detail-page";
+import BookingsPage from "@/pages/bookings-page";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 
@@ -18,6 +20,8 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/preferences" component={PreferencesPage} />
       <ProtectedRoute path="/results" component={ResultsPage} />
+      <ProtectedRoute path="/package/:id" component={PackageDetailPage} />
+      <ProtectedRoute path="/bookings" component={BookingsPage} />
       <Route component={NotFound} />
     </Switch>
   );
