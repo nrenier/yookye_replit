@@ -1,9 +1,14 @@
-import { users, type User, type InsertUser, preferences, type Preference, type InsertPreference, travelPackages, type TravelPackage, type InsertTravelPackage } from "@shared/schema";
+import {
+  users, type User, type InsertUser,
+  preferences, type Preference, type InsertPreference,
+  travelPackages, type TravelPackage, type InsertTravelPackage,
+  bookings, type Booking, type InsertBooking
+} from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import connectPg from "connect-pg-simple";
 import { db, pool } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 const MemoryStore = createMemoryStore(session);
 const PostgresSessionStore = connectPg(session);
@@ -26,6 +31,13 @@ export interface IStorage {
   getTravelPackages(): Promise<TravelPackage[]>;
   getTravelPackagesByCategory(category: string): Promise<TravelPackage[]>;
   createTravelPackage(travelPackage: InsertTravelPackage): Promise<TravelPackage>;
+  
+  // Booking operations
+  getBooking(id: number): Promise<Booking | undefined>;
+  getBookingsByUserId(userId: number): Promise<Booking[]>;
+  createBooking(booking: InsertBooking): Promise<Booking>;
+  updateBookingStatus(id: number, status: string): Promise<Booking>;
+  updateBookingPaymentStatus(id: number, paymentStatus: string): Promise<Booking>;
   
   // Session store
   sessionStore: any; // Use 'any' to avoid the type error with session.Store
@@ -105,10 +117,8 @@ export class DatabaseStorage implements IStorage {
   async getTravelPackagesByCategory(category: string): Promise<TravelPackage[]> {
     try {
       // PostgreSQL arrays use a different syntax for containment checks
-      const result = await db.execute(
-        `SELECT * FROM travel_packages WHERE $1 = ANY(categories)`,
-        [category]
-      );
+      const sql = `SELECT * FROM travel_packages WHERE $1 = ANY(categories)`;
+      const result = await db.execute(sql, [category]);
       return result.rows as TravelPackage[];
     } catch (error) {
       console.error("Error fetching travel packages by category:", error);
@@ -119,6 +129,53 @@ export class DatabaseStorage implements IStorage {
   async createTravelPackage(insertTravelPackage: InsertTravelPackage): Promise<TravelPackage> {
     const [travelPackage] = await db.insert(travelPackages).values(insertTravelPackage).returning();
     return travelPackage;
+  }
+  
+  async getBooking(id: number): Promise<Booking | undefined> {
+    const [booking] = await db.select().from(bookings).where(eq(bookings.id, id));
+    return booking;
+  }
+  
+  async getBookingsByUserId(userId: number): Promise<Booking[]> {
+    return await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.userId, userId))
+      .orderBy(desc(bookings.bookingDate));
+  }
+  
+  async createBooking(insertBooking: InsertBooking): Promise<Booking> {
+    // Per ora, usiamo i valori stringa direttamente come sono (il formato è già compatibile)
+    const [booking] = await db.insert(bookings).values(insertBooking).returning();
+    return booking;
+  }
+  
+  async updateBookingStatus(id: number, status: string): Promise<Booking> {
+    const [booking] = await db
+      .update(bookings)
+      .set({ status })
+      .where(eq(bookings.id, id))
+      .returning();
+      
+    if (!booking) {
+      throw new Error(`Booking with id ${id} not found`);
+    }
+    
+    return booking;
+  }
+  
+  async updateBookingPaymentStatus(id: number, paymentStatus: string): Promise<Booking> {
+    const [booking] = await db
+      .update(bookings)
+      .set({ paymentStatus })
+      .where(eq(bookings.id, id))
+      .returning();
+      
+    if (!booking) {
+      throw new Error(`Booking with id ${id} not found`);
+    }
+    
+    return booking;
   }
   
   private async seedTravelPackages() {

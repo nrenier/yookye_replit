@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, timestamp, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -62,9 +62,38 @@ export const insertTravelPackageSchema = createInsertSchema(travelPackages).omit
   id: true,
 });
 
+// Nuova tabella per le prenotazioni
+export const bookings = pgTable("bookings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  packageId: integer("package_id").notNull().references(() => travelPackages.id),
+  bookingDate: timestamp("booking_date").defaultNow().notNull(),
+  travelDate: date("travel_date").notNull(),
+  returnDate: date("return_date").notNull(),
+  numAdults: integer("num_adults").default(1),
+  numChildren: integer("num_children").default(0),
+  numInfants: integer("num_infants").default(0),
+  totalPrice: integer("total_price").notNull(),
+  specialRequests: text("special_requests"),
+  status: text("status").default("pending").notNull(), // pending, confirmed, cancelled
+  paymentStatus: text("payment_status").default("unpaid").notNull(), // unpaid, paid
+  contactPhone: text("contact_phone"),
+  contactEmail: text("contact_email"),
+});
+
+export const insertBookingSchema = createInsertSchema(bookings).omit({
+  id: true,
+  bookingDate: true,
+}).extend({
+  travelDate: z.string().min(1, "Data di partenza richiesta"),
+  returnDate: z.string().min(1, "Data di ritorno richiesta"),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Preference = typeof preferences.$inferSelect;
 export type InsertPreference = z.infer<typeof insertPreferenceSchema>;
 export type TravelPackage = typeof travelPackages.$inferSelect;
 export type InsertTravelPackage = z.infer<typeof insertTravelPackageSchema>;
+export type Booking = typeof bookings.$inferSelect;
+export type InsertBooking = z.infer<typeof insertBookingSchema>;
