@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Redirect } from "wouter";
 import MainLayout from "@/components/layouts/main-layout";
@@ -8,6 +8,13 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements
+} from "@stripe/react-stripe-js";
 import { 
   Calendar, 
   CreditCard, 
@@ -16,6 +23,9 @@ import {
   XCircle, 
   Clock 
 } from "lucide-react";
+
+// Inizializza Stripe
+const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx"); // Usa il tuo publishable key qui
 import {
   Card,
   CardContent,
@@ -48,11 +58,75 @@ import {
   Badge
 } from "@/components/ui/badge";
 
+// Componente per il modulo di pagamento
+function CheckoutForm({ clientSecret, onSuccess, onError }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin + '/bookings',
+        },
+        redirect: 'if_required'
+      });
+
+      if (error) {
+        onError(error.message);
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        onSuccess();
+      } else {
+        onError("Pagamento non completato");
+      }
+    } catch (err) {
+      onError(err.message || "Errore durante il pagamento");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <PaymentElement />
+      <div className="mt-4 flex justify-end">
+        <Button
+          type="submit"
+          className="bg-yookve-red hover:bg-red-700 mt-4"
+          disabled={!stripe || isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Elaborazione...
+            </>
+          ) : (
+            "Paga ora"
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
 export default function BookingsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
+  const [isStripeReady, setIsStripeReady] = useState(false);
 
   // Recupera le prenotazioni dell'utente
   const { data: bookings, isLoading } = useQuery<Booking[]>({
@@ -88,33 +162,30 @@ export default function BookingsPage() {
     },
   });
 
-  // Simula la creazione di un intent di pagamento
+  // Crea un intento di pagamento reale con Stripe
   const createPaymentIntentMutation = useMutation({
-    mutationFn: async (bookingId: number) => {
-      // In una vera implementazione, questo chiamerebbe l'API /api/create-payment-intent
-      // Per ora, simuliamo il comportamento
-      return new Promise<{ clientSecret: string }>((resolve) => {
-        setTimeout(() => {
-          resolve({ clientSecret: "test_client_secret" });
-        }, 1000);
+    mutationFn: async (bookingId: string) => {
+      const response = await apiRequest.post('/api/create-payment-intent', {
+        bookingId
       });
+      return response.data;
     },
-    onSuccess: () => {
-      // Simuliamo un pagamento riuscito
-      toast({
-        title: "Pagamento simulato riuscito",
-        description: "In una vera implementazione, questo aprirebbe il modulo di pagamento Stripe.",
-      });
-
-      // Chiudi il modal e aggiorna lo stato
-      setIsPaymentModalOpen(false);
-
-      // Aggiorna lo stato della prenotazione
-      if (selectedBooking) {
-        updateBookingStatusMutation.mutate({
-          id: selectedBooking.id,
-          status: "confirmed"
+    onSuccess: (data) => {
+      // Apri il form di pagamento Stripe
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret);
+        setIsStripeReady(true);
+        toast({
+          title: "Pagamento iniziato",
+          description: "Compila i dati della carta per procedere al pagamento.",
         });
+      } else {
+        toast({
+          title: "Errore",
+          description: "Impossibile ottenere i dati di pagamento",
+          variant: "destructive",
+        });
+        setIsPaymentModalOpen(false);
       }
     },
     onError: (error: Error) => {
@@ -123,6 +194,7 @@ export default function BookingsPage() {
         description: `Non è stato possibile elaborare il pagamento: ${error.message}`,
         variant: "destructive",
       });
+      setIsPaymentModalOpen(false);
     },
   });
 
@@ -135,10 +207,10 @@ export default function BookingsPage() {
   const handlePayment = (booking: Booking) => {
     setSelectedBooking(booking);
     setIsPaymentModalOpen(true);
-
-    // In una vera implementazione, qui verrebbe creato un payment intent
-    // e si aprirebbe il form di Stripe per il pagamento
-    createPaymentIntentMutation.mutate(booking.id);
+    setIsStripeReady(false);
+    setClientSecret("");
+    
+    // Non creiamo immediatamente il payment intent, aspettiamo che l'utente clicchi su "Procedi al pagamento"
   };
 
   // Gestisci la cancellazione di una prenotazione
@@ -320,17 +392,11 @@ export default function BookingsPage() {
             {createPaymentIntentMutation.isPending ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin text-yookve-red mb-4" />
-                <p>Elaborazione del pagamento in corso...</p>
+                <p>Preparazione del pagamento in corso...</p>
               </div>
             ) : (
               <div className="space-y-4">
-                <p className="text-center mb-4">
-                  Questo è un pagamento simulato per scopi dimostrativi.
-                  <br />
-                  In una vera implementazione, qui verrebbe mostrato il form di pagamento di Stripe.
-                </p>
-
-                <div className="border rounded-md p-4 bg-gray-50">
+                <div className="border rounded-md p-4 bg-gray-50 mb-4">
                   <h3 className="font-semibold mb-2">Dettagli della prenotazione:</h3>
                   {selectedBooking && (
                     <div className="space-y-2">
@@ -343,6 +409,29 @@ export default function BookingsPage() {
                     </div>
                   )}
                 </div>
+                
+                {isStripeReady && clientSecret && (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CheckoutForm 
+                      clientSecret={clientSecret}
+                      onSuccess={() => {
+                        toast({
+                          title: "Pagamento completato",
+                          description: "Il tuo pagamento è stato elaborato con successo.",
+                        });
+                        setIsPaymentModalOpen(false);
+                        queryClient.invalidateQueries({ queryKey: ['bookings'] });
+                      }}
+                      onError={(message) => {
+                        toast({
+                          title: "Errore nel pagamento",
+                          description: message,
+                          variant: "destructive",
+                        });
+                      }}
+                    />
+                  </Elements>
+                )}
               </div>
             )}
           </div>
@@ -355,13 +444,15 @@ export default function BookingsPage() {
             >
               Annulla
             </Button>
-            <Button
-              className="bg-yookve-red hover:bg-red-700"
-              onClick={() => createPaymentIntentMutation.mutate(selectedBooking!.id)}
-              disabled={createPaymentIntentMutation.isPending}
-            >
-              Conferma pagamento
-            </Button>
+            {!isStripeReady && (
+              <Button
+                className="bg-yookve-red hover:bg-red-700"
+                onClick={() => createPaymentIntentMutation.mutate(selectedBooking!.id)}
+                disabled={createPaymentIntentMutation.isPending}
+              >
+                Procedi al pagamento
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
