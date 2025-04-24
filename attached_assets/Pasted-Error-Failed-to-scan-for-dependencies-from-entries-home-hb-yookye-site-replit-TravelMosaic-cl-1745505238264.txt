@@ -1,0 +1,39 @@
+Error:   Failed to scan for dependencies from entries:
+  /home/hb/yookye_site/replit/TravelMosaic/client/index.html
+
+  ✘ [ERROR] Multiple exports with the same name "queryClient"
+
+    client/src/lib/queryClient.ts:61:13:
+      61 │ export const queryClient = new QueryClient({
+         ╵              ~~~~~~~~~~~
+
+  The name "queryClient" was originally exported here:
+
+    client/src/lib/queryClient.ts:44:13:
+      44 │ export const queryClient = new QueryClient({
+         ╵              ~~~~~~~~~~~
+
+
+✘ [ERROR] The symbol "queryClient" has already been declared
+
+    client/src/lib/queryClient.ts:61:13:
+      61 │ export const queryClient = new QueryClient({
+         ╵              ~~~~~~~~~~~
+
+  The symbol "queryClient" was originally declared here:
+
+    client/src/lib/queryClient.ts:44:13:
+      44 │ export const queryClient = new QueryClient({
+         ╵              ~~~~~~~~~~~
+
+
+    at failureErrorWithLog (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:943:7)
+    at /home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/hb/yookye_site/replit/TravelMosaic/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
