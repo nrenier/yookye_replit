@@ -1,4 +1,4 @@
-from opensearchpy import OpenSearch
+from elasticsearch import Elasticsearch
 from .settings import (
     OPENSEARCH_HOST, 
     OPENSEARCH_PORT, 
@@ -17,11 +17,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_opensearch_client():
-    """Crea e restituisce un client OpenSearch."""
-    client = OpenSearch(
-        hosts=[{'host': OPENSEARCH_HOST, 'port': OPENSEARCH_PORT}],
-        http_auth=(OPENSEARCH_USERNAME, OPENSEARCH_PASSWORD) if OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD else None,
-        use_ssl=OPENSEARCH_USE_SSL,
+    """Crea e restituisce un client Elasticsearch."""
+    auth = None
+    if OPENSEARCH_USERNAME and OPENSEARCH_PASSWORD:
+        auth = (OPENSEARCH_USERNAME, OPENSEARCH_PASSWORD)
+        
+    client = Elasticsearch(
+        hosts=[f"http{'s' if OPENSEARCH_USE_SSL else ''}://{OPENSEARCH_HOST}:{OPENSEARCH_PORT}"],
+        basic_auth=auth,
         verify_certs=OPENSEARCH_VERIFY_CERTS,
         ssl_show_warn=False
     )
