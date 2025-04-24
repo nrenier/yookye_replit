@@ -1,8 +1,12 @@
 import { users, type User, type InsertUser, preferences, type Preference, type InsertPreference, travelPackages, type TravelPackage, type InsertTravelPackage } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
+import connectPg from "connect-pg-simple";
+import { db, pool } from "./db";
+import { eq, and } from "drizzle-orm";
 
 const MemoryStore = createMemoryStore(session);
+const PostgresSessionStore = connectPg(session);
 
 export interface IStorage {
   // User operations
@@ -24,30 +28,17 @@ export interface IStorage {
   createTravelPackage(travelPackage: InsertTravelPackage): Promise<TravelPackage>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Use 'any' to avoid the type error with session.Store
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private preferences: Map<number, Preference>;
-  private travelPackages: Map<number, TravelPackage>;
-  
-  userCurrentId: number;
-  preferenceCurrentId: number;
-  travelPackageCurrentId: number;
-  sessionStore: session.SessionStore;
+// DatabaseStorage that replaces MemStorage
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
 
   constructor() {
-    this.users = new Map();
-    this.preferences = new Map();
-    this.travelPackages = new Map();
-    
-    this.userCurrentId = 1;
-    this.preferenceCurrentId = 1;
-    this.travelPackageCurrentId = 1;
-    
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000,
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      createTableIfMissing: true 
     });
     
     // Seed travel packages data
@@ -55,78 +46,86 @@ export class MemStorage implements IStorage {
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
   
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email === email,
-    );
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userCurrentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
   
   async getPreference(id: number): Promise<Preference | undefined> {
-    return this.preferences.get(id);
+    const [preference] = await db.select().from(preferences).where(eq(preferences.id, id));
+    return preference;
   }
   
   async getPreferencesByUserId(userId: number): Promise<Preference[]> {
-    return Array.from(this.preferences.values()).filter(
-      (pref) => pref.userId === userId,
-    );
+    return await db.select().from(preferences).where(eq(preferences.userId, userId));
   }
   
   async createPreference(insertPreference: InsertPreference): Promise<Preference> {
-    const id = this.preferenceCurrentId++;
-    const preference: Preference = { ...insertPreference, id };
-    this.preferences.set(id, preference);
+    const [preference] = await db.insert(preferences).values(insertPreference).returning();
     return preference;
   }
   
   async updatePreference(id: number, updatedPreference: Partial<InsertPreference>): Promise<Preference> {
-    const preference = await this.getPreference(id);
+    const [preference] = await db
+      .update(preferences)
+      .set(updatedPreference)
+      .where(eq(preferences.id, id))
+      .returning();
+    
     if (!preference) {
       throw new Error(`Preference with id ${id} not found`);
     }
     
-    const updated: Preference = { ...preference, ...updatedPreference };
-    this.preferences.set(id, updated);
-    return updated;
+    return preference;
   }
   
   async getTravelPackage(id: number): Promise<TravelPackage | undefined> {
-    return this.travelPackages.get(id);
-  }
-  
-  async getTravelPackages(): Promise<TravelPackage[]> {
-    return Array.from(this.travelPackages.values());
-  }
-  
-  async getTravelPackagesByCategory(category: string): Promise<TravelPackage[]> {
-    return Array.from(this.travelPackages.values()).filter(
-      (pkg) => pkg.categories && pkg.categories.includes(category),
-    );
-  }
-  
-  async createTravelPackage(insertTravelPackage: InsertTravelPackage): Promise<TravelPackage> {
-    const id = this.travelPackageCurrentId++;
-    const travelPackage: TravelPackage = { ...insertTravelPackage, id };
-    this.travelPackages.set(id, travelPackage);
+    const [travelPackage] = await db.select().from(travelPackages).where(eq(travelPackages.id, id));
     return travelPackage;
   }
   
-  private seedTravelPackages() {
+  async getTravelPackages(): Promise<TravelPackage[]> {
+    return await db.select().from(travelPackages);
+  }
+  
+  async getTravelPackagesByCategory(category: string): Promise<TravelPackage[]> {
+    // For array contains operation in Postgres
+    return await db
+      .select()
+      .from(travelPackages)
+      .where(
+        // @ts-ignore - The array contains operator works in Postgres
+        // but TypeScript doesn't recognize it directly
+        eq(travelPackages.categories.contains([category]), true)
+      );
+  }
+  
+  async createTravelPackage(insertTravelPackage: InsertTravelPackage): Promise<TravelPackage> {
+    const [travelPackage] = await db.insert(travelPackages).values(insertTravelPackage).returning();
+    return travelPackage;
+  }
+  
+  private async seedTravelPackages() {
+    // Check if travel packages already exist
+    const existingPackages = await db.select().from(travelPackages);
+    if (existingPackages.length > 0) {
+      return; // Already seeded
+    }
+    
     const packages: InsertTravelPackage[] = [
       {
         title: "Weekend Culturale a Roma",
@@ -256,10 +255,11 @@ export class MemStorage implements IStorage {
       }
     ];
     
-    packages.forEach(pkg => {
-      this.createTravelPackage(pkg);
-    });
+    for (const pkg of packages) {
+      await db.insert(travelPackages).values(pkg);
+    }
   }
 }
 
-export const storage = new MemStorage();
+// Export an instance of DatabaseStorage for use in the application
+export const storage = new DatabaseStorage();

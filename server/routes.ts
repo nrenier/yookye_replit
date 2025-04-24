@@ -114,17 +114,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         recommendedPackages = allPackages.filter(pkg => 
           pkg.categories && 
           pkg.categories.some(category => 
-            latestPreference.interests.includes(category)
+            latestPreference.interests && latestPreference.interests.includes(category)
           )
         );
       }
       
       // Sort by relevance (number of matching interests)
       recommendedPackages.sort((a, b) => {
-        const aMatches = a.categories ? a.categories.filter(cat => 
-          latestPreference.interests.includes(cat)).length : 0;
-        const bMatches = b.categories ? b.categories.filter(cat => 
-          latestPreference.interests.includes(cat)).length : 0;
+        const aMatches = a.categories && latestPreference.interests ? 
+          a.categories.filter(cat => latestPreference.interests!.includes(cat)).length : 0;
+        const bMatches = b.categories && latestPreference.interests ? 
+          b.categories.filter(cat => latestPreference.interests!.includes(cat)).length : 0;
         
         return bMatches - aMatches;
       });
