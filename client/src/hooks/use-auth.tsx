@@ -1,3 +1,4 @@
+
 import { createContext, ReactNode, useContext } from "react";
 import {
   useQuery,
@@ -109,9 +110,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
-import { useContext } from 'react';
-import { AuthContext } from './auth-provider';
 
 // Custom hook to use the auth context
 export function useAuth() {
