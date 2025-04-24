@@ -1,11 +1,18 @@
 import { TravelPackage } from "@shared/schema";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 
 interface TravelCardProps {
   travelPackage: TravelPackage;
 }
 
 export default function TravelCard({ travelPackage }: TravelCardProps) {
+  const [, navigate] = useLocation();
+
+  const handleViewDetails = () => {
+    navigate(`/package/${travelPackage.id}`);
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
       <div className="relative">
@@ -74,7 +81,10 @@ export default function TravelCard({ travelPackage }: TravelCardProps) {
             <p className="text-sm text-gray-500">a partire da</p>
             <p className="text-xl font-bold">€{travelPackage.price} <span className="text-sm font-normal">/ persona</span></p>
           </div>
-          <Button className="bg-yookve-red hover:bg-red-700">
+          <Button 
+            className="bg-yookve-red hover:bg-red-700"
+            onClick={handleViewDetails}
+          >
             Vedi Dettagli
           </Button>
         </div>
