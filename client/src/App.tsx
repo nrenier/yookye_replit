@@ -2,6 +2,8 @@
 import { useEffect } from "react";
 import { Router, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import MainLayout from "@/components/layouts/main-layout";
 import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
@@ -15,9 +17,10 @@ import { AuthProvider } from "@/hooks/use-auth";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <MainLayout>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <MainLayout>
           <Route path="/" component={HomePage} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/packages/:id" component={PackageDetailPage} />
@@ -31,5 +34,6 @@ export default function App() {
         <Toaster />
       </Router>
     </AuthProvider>
+    </QueryClientProvider>
   );
 }
