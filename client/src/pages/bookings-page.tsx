@@ -165,10 +165,10 @@ export default function BookingsPage() {
   // Crea un intento di pagamento reale con Stripe
   const createPaymentIntentMutation = useMutation({
     mutationFn: async (bookingId: string) => {
-      const response = await apiRequest.post('/api/create-payment-intent', {
+      const response = await apiRequest("POST", '/api/create-payment-intent', {
         bookingId
       });
-      return response.data;
+      return await response.json();
     },
     onSuccess: (data) => {
       // Apri il form di pagamento Stripe
