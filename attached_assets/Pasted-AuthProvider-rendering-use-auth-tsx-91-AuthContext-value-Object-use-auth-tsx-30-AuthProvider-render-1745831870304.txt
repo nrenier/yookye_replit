@@ -1,0 +1,141 @@
+AuthProvider rendering
+use-auth.tsx:91 AuthContext value: Object
+use-auth.tsx:30 AuthProvider rendering
+use-auth.tsx:91 AuthContext value: Object
+hook.js:608 You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS.
+overrideMethod @ hook.js:608Understand this warning
+use-auth.tsx:99 useAuth context from use-auth.tsx: null
+hook.js:608 AuthContext not found - AuthProvider might not be wrapping this component Error Component Stack
+    at HomePage (<anonymous>)
+    at Route (wouter.js?v=44c975e3:323:16)
+    at Router (wouter.js?v=44c975e3:291:17)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (main-layout.tsx:17:30)
+    at QueryClientProvider (@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App (<anonymous>)
+    at AuthProvider (use-auth.tsx:25:32)
+overrideMethod @ hook.js:608Understand this error
+hook.js:608 HomePage: Errore durante l'utilizzo di useAuth Error: useAuth must be used within an AuthProvider
+    at useAuth (use-auth.tsx:102:11)
+    at HomePage (home-page.tsx:11:22)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=44c975e3:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=44c975e3:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=44c975e3:19116:15)
+    at performSyncWorkOnRoot (chunk-RPCDYKBN.js?v=44c975e3:18874:28) Error Component Stack
+    at HomePage (<anonymous>)
+    at Route (wouter.js?v=44c975e3:323:16)
+    at Router (wouter.js?v=44c975e3:291:17)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (main-layout.tsx:17:30)
+    at QueryClientProvider (@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App (<anonymous>)
+    at AuthProvider (use-auth.tsx:25:32)
+overrideMethod @ hook.js:608Understand this error
+use-auth.tsx:99 useAuth context from use-auth.tsx: null
+hook.js:608 AuthContext not found - AuthProvider might not be wrapping this component Error Component Stack
+    at AuthPage (auth-page.tsx:36:64)
+    at Route (wouter.js?v=44c975e3:323:16)
+    at Router (wouter.js?v=44c975e3:291:17)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (main-layout.tsx:17:30)
+    at QueryClientProvider (@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App (<anonymous>)
+    at AuthProvider (use-auth.tsx:25:32)
+overrideMethod @ hook.js:608Understand this error
+use-auth.tsx:99 useAuth context from use-auth.tsx: null
+hook.js:608 AuthContext not found - AuthProvider might not be wrapping this component Error Component Stack
+    at AuthPage (auth-page.tsx:36:64)
+    at Route (wouter.js?v=44c975e3:323:16)
+    at Router (wouter.js?v=44c975e3:291:17)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (main-layout.tsx:17:30)
+    at QueryClientProvider (@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App (<anonymous>)
+    at AuthProvider (use-auth.tsx:25:32)
+overrideMethod @ hook.js:608Understand this error
+use-auth.tsx:102 Uncaught Error: useAuth must be used within an AuthProvider
+    at useAuth (use-auth.tsx:102:11)
+    at AuthPage (auth-page.tsx:36:64)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=44c975e3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=44c975e3:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=44c975e3:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=44c975e3:19198:20)Understand this error
+use-auth.tsx:99 useAuth context from use-auth.tsx: null
+hook.js:608 AuthContext not found - AuthProvider might not be wrapping this component Error Component Stack
+    at AuthPage (auth-page.tsx:36:64)
+    at Route (wouter.js?v=44c975e3:323:16)
+    at Router (wouter.js?v=44c975e3:291:17)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (main-layout.tsx:17:30)
+    at QueryClientProvider (@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App (<anonymous>)
+    at AuthProvider (use-auth.tsx:25:32)
+overrideMethod @ hook.js:608Understand this error
+use-auth.tsx:99 useAuth context from use-auth.tsx: null
+hook.js:608 AuthContext not found - AuthProvider might not be wrapping this component Error Component Stack
+    at AuthPage (auth-page.tsx:36:64)
+    at Route (wouter.js?v=44c975e3:323:16)
+    at Router (wouter.js?v=44c975e3:291:17)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (main-layout.tsx:17:30)
+    at QueryClientProvider (@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App (<anonymous>)
+    at AuthProvider (use-auth.tsx:25:32)
+overrideMethod @ hook.js:608Understand this error
+use-auth.tsx:102 Uncaught Error: useAuth must be used within an AuthProvider
+    at useAuth (use-auth.tsx:102:11)
+    at AuthPage (auth-page.tsx:36:64)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=44c975e3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=44c975e3:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=44c975e3:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=44c975e3:19198:20)Understand this error
+hook.js:608 The above error occurred in the <AuthPage> component:
+
+    at AuthPage (http://localhost:5000/src/pages/auth-page.tsx:48:64)
+    at Route (http://localhost:5000/@fs/home/hb/yookye_site/replit/TravelMosaic/node_modules/.vite/deps/wouter.js?v=44c975e3:323:16)
+    at Router (http://localhost:5000/@fs/home/hb/yookye_site/replit/TravelMosaic/node_modules/.vite/deps/wouter.js?v=44c975e3:291:17)
+    at main
+    at div
+    at MainLayout (http://localhost:5000/src/components/layouts/main-layout.tsx:27:30)
+    at QueryClientProvider (http://localhost:5000/@fs/home/hb/yookye_site/replit/TravelMosaic/node_modules/.vite/deps/@tanstack_react-query.js?v=44c975e3:2875:3)
+    at App
+    at AuthProvider (http://localhost:5000/src/hooks/use-auth.tsx?v=E9sSbPBlFbm9hKAZ5GWHm:21:32)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+overrideMethod @ hook.js:608Understand this error
+chunk-RPCDYKBN.js?v=44c975e3:9129 Uncaught Error: useAuth must be used within an AuthProvider
+    at useAuth (use-auth.tsx:102:11)
+    at AuthPage (auth-page.tsx:36:64)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=44c975e3:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=44c975e3:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=44c975e3:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=44c975e3:18736:28)Understand this error
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
