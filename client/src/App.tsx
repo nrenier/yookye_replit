@@ -16,8 +16,8 @@ import { AuthProvider } from "./hooks/use-auth"; // Added AuthProvider import
 
 export default function App() {
   return (
-    <AuthProvider> {/* Wrapped App with AuthProvider */}
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider> {/* AuthProvider deve essere all'interno di QueryClientProvider */}
         <MainLayout> {/* MainLayout moved outside Router */}
           <Router>
             <Route path="/" component={HomePage} />
@@ -32,7 +32,7 @@ export default function App() {
           </Router>
           <Toaster /> {/* Toaster moved inside MainLayout */}
         </MainLayout>
-      </QueryClientProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
