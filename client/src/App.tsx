@@ -17,20 +17,20 @@ import NotFound from "@/pages/not-found";
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <MainLayout>
-        <Route path="/" component={HomePage} />
-        <Route path="/auth" component={AuthPage} />
-        <Route path="/packages/:id" component={PackageDetailPage} />
-        <Route path="/preferences" component={PreferencesPage} />
-        <Route path="/results" component={ResultsPage} />
-        <Route path="/bookings">
-          <ProtectedRoute path="/bookings" component={BookingsPage} />
-        </Route>
-        <Route component={NotFound} />
+      <MainLayout> {/* MainLayout moved outside Router */}
+        <Router>
+          <Route path="/" component={HomePage} />
+          <Route path="/auth" component={AuthPage} />
+          <Route path="/packages/:id" component={PackageDetailPage} />
+          <Route path="/preferences" component={PreferencesPage} />
+          <Route path="/results" component={ResultsPage} />
+          <Route path="/bookings">
+            <ProtectedRoute path="/bookings" component={BookingsPage} />
+          </Route>
+          <Route component={NotFound} />
+        </Router>
+        <Toaster /> {/* Toaster moved inside MainLayout */}
       </MainLayout>
-      <Toaster />
-    </Router>
     </QueryClientProvider>
   );
 }
