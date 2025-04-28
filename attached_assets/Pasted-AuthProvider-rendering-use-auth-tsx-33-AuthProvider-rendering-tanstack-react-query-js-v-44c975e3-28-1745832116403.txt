@@ -1,0 +1,117 @@
+AuthProvider rendering
+use-auth.tsx:33 AuthProvider rendering
+@tanstack_react-query.js?v=44c975e3:2870 Uncaught Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (@tanstack_react-query.js?v=44c975e3:2870:11)
+    at useMutation (@tanstack_react-query.js?v=44c975e3:3357:18)
+    at AuthProvider (use-auth.tsx:87:25)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=44c975e3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=44c975e3:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=44c975e3:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19765:15)
+useQueryClient @ @tanstack_react-query.js?v=44c975e3:2870
+useMutation @ @tanstack_react-query.js?v=44c975e3:3357
+AuthProvider @ use-auth.tsx:87
+renderWithHooks @ chunk-RPCDYKBN.js?v=44c975e3:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=44c975e3:14926
+beginWork @ chunk-RPCDYKBN.js?v=44c975e3:15914
+callCallback2 @ chunk-RPCDYKBN.js?v=44c975e3:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=44c975e3:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=44c975e3:3733
+beginWork$1 @ chunk-RPCDYKBN.js?v=44c975e3:19765
+performUnitOfWork @ chunk-RPCDYKBN.js?v=44c975e3:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=44c975e3:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=44c975e3:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=44c975e3:18678
+workLoop @ chunk-RPCDYKBN.js?v=44c975e3:197
+flushWork @ chunk-RPCDYKBN.js?v=44c975e3:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=44c975e3:384Understand this error
+use-auth.tsx:33 AuthProvider rendering
+use-auth.tsx:33 AuthProvider rendering
+@tanstack_react-query.js?v=44c975e3:2870 Uncaught Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (@tanstack_react-query.js?v=44c975e3:2870:11)
+    at useMutation (@tanstack_react-query.js?v=44c975e3:3357:18)
+    at AuthProvider (use-auth.tsx:87:25)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=44c975e3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=44c975e3:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=44c975e3:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19765:15)
+useQueryClient @ @tanstack_react-query.js?v=44c975e3:2870
+useMutation @ @tanstack_react-query.js?v=44c975e3:3357
+AuthProvider @ use-auth.tsx:87
+renderWithHooks @ chunk-RPCDYKBN.js?v=44c975e3:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=44c975e3:14926
+beginWork @ chunk-RPCDYKBN.js?v=44c975e3:15914
+callCallback2 @ chunk-RPCDYKBN.js?v=44c975e3:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=44c975e3:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=44c975e3:3733
+beginWork$1 @ chunk-RPCDYKBN.js?v=44c975e3:19765
+performUnitOfWork @ chunk-RPCDYKBN.js?v=44c975e3:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=44c975e3:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=44c975e3:19116
+recoverFromConcurrentError @ chunk-RPCDYKBN.js?v=44c975e3:18736
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=44c975e3:18684
+workLoop @ chunk-RPCDYKBN.js?v=44c975e3:197
+flushWork @ chunk-RPCDYKBN.js?v=44c975e3:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=44c975e3:384Understand this error
+hook.js:608 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (http://localhost:5000/src/hooks/use-auth.tsx:22:32)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+overrideMethod @ hook.js:608
+logCapturedError @ chunk-RPCDYKBN.js?v=44c975e3:14032
+update.callback @ chunk-RPCDYKBN.js?v=44c975e3:14052
+callCallback @ chunk-RPCDYKBN.js?v=44c975e3:11248
+commitUpdateQueue @ chunk-RPCDYKBN.js?v=44c975e3:11265
+commitLayoutEffectOnFiber @ chunk-RPCDYKBN.js?v=44c975e3:17093
+commitLayoutMountEffects_complete @ chunk-RPCDYKBN.js?v=44c975e3:17980
+commitLayoutEffects_begin @ chunk-RPCDYKBN.js?v=44c975e3:17969
+commitLayoutEffects @ chunk-RPCDYKBN.js?v=44c975e3:17920
+commitRootImpl @ chunk-RPCDYKBN.js?v=44c975e3:19353
+commitRoot @ chunk-RPCDYKBN.js?v=44c975e3:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=44c975e3:18760
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=44c975e3:18718
+workLoop @ chunk-RPCDYKBN.js?v=44c975e3:197
+flushWork @ chunk-RPCDYKBN.js?v=44c975e3:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=44c975e3:384Understand this error
+chunk-RPCDYKBN.js?v=44c975e3:19413 Uncaught Error: No QueryClient set, use QueryClientProvider to set one
+    at useQueryClient (@tanstack_react-query.js?v=44c975e3:2870:11)
+    at useMutation (@tanstack_react-query.js?v=44c975e3:3357:18)
+    at AuthProvider (use-auth.tsx:87:25)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=44c975e3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=44c975e3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=44c975e3:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=44c975e3:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=44c975e3:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=44c975e3:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=44c975e3:19116:15)
+useQueryClient @ @tanstack_react-query.js?v=44c975e3:2870
+useMutation @ @tanstack_react-query.js?v=44c975e3:3357
+AuthProvider @ use-auth.tsx:87
+renderWithHooks @ chunk-RPCDYKBN.js?v=44c975e3:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=44c975e3:14926
+beginWork @ chunk-RPCDYKBN.js?v=44c975e3:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=44c975e3:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=44c975e3:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=44c975e3:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=44c975e3:19116
+recoverFromConcurrentError @ chunk-RPCDYKBN.js?v=44c975e3:18736
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=44c975e3:18684
+workLoop @ chunk-RPCDYKBN.js?v=44c975e3:197
+flushWork @ chunk-RPCDYKBN.js?v=44c975e3:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=44c975e3:384Understand this error
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+stripe.js:1 You may test your Stripe.js integration over HTTP. However, live Stripe.js integrations must use HTTPS.
