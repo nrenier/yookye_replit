@@ -1,13 +1,13 @@
-
 import axios from 'axios';
 
 // Base URL for internal API
 const API_URL = '/api';
 
 // Base URL for external REST API (from .env)
-const REST_API_URL = import.meta.env.VITE_REST_API_URL || process.env.REST_API_URL;
-const REST_API_USERNAME = import.meta.env.VITE_REST_API_USERNAME || process.env.REST_API_USERNAME;
-const REST_API_PASSWORD = import.meta.env.VITE_REST_API_PASSWORD || process.env.REST_API_PASSWORD;
+const REST_API_URL = import.meta.env.VITE_REST_API_URL;
+
+const REST_API_USERNAME = import.meta.env.VITE_REST_API_USERNAME;
+const REST_API_PASSWORD = import.meta.env.VITE_REST_API_PASSWORD;
 
 // Create axios instance for internal API
 const apiClient = axios.create({
