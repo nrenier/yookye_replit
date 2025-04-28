@@ -116,10 +116,16 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.error('API Error:', error.response?.status, error.response?.data);
+    
     // Handle 401 errors (unauthorized)
     if (error.response?.status === 401) {
+      console.log('Errore 401: Token non valido o sessione scaduta');
       localStorage.removeItem('auth_token');
       localStorage.removeItem('refresh_token');
+      
+      // Puoi aggiungere un reindirizzamento alla pagina di login se necessario
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }
@@ -151,7 +157,18 @@ export const logout = async () => {
 
 export const getUser = async () => {
   try {
+    // Verifica se c'è un token prima di fare la richiesta
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      console.log('Nessun token disponibile per getUser');
+      throw new Error('No auth token available');
+    }
+    
     const response = await apiClient.get('/auth/me');
+    if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+      console.error('Risposta HTML ricevuta invece di JSON:', response.data.substring(0, 100) + '...');
+      throw new Error('Invalid JSON response (HTML received)');
+    }
     return response.data;
   } catch (error) {
     console.error('Get user error:', error);

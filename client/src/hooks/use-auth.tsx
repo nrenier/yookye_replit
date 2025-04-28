@@ -37,10 +37,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuthStatus = async () => {
       setIsLoading(true);
       try {
+        // Verifica se esiste un token nel localStorage
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          // Se non c'è token, l'utente non è autenticato
+          console.log("Nessun token di autenticazione trovato");
+          setUser(null);
+          return;
+        }
+        
         const userData = await getUser();
         setUser(userData);
       } catch (err) {
         console.error("Authentication check failed:", err);
+        // Se c'è un errore di autenticazione, pulisci i token
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
         setUser(null);
       } finally {
         setIsLoading(false);
