@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/ui/logo";
-import { useAuth } from "@/hooks/auth-provider";
+import { useAuth } from "@/hooks/use-auth"; // Corrected import path
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
