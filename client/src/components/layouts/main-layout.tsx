@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/ui/logo";
-import { useAuth } from "@/hooks/use-auth"; // Corrected import path
+import { useAuth } from "../../hooks/use-auth"; // Changed to relative import
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -109,112 +109,4 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                       <Link href="/results">I miei pacchetti</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Link href="/bookings">Le mie prenotazioni</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout}>
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link href="/auth">
-                  <Button variant="ghost" className="hover:text-gray-300 p-0">
-                    <UserRound className="h-5 w-5" />
-                  </Button>
-                </Link>
-              )}
-              <Link href="/carrello" className="hover:text-gray-300">
-                <ShoppingCart className="h-5 w-5" />
-              </Link>
-              <button className="hover:text-gray-300">IT</button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="flex-grow">
-        {children}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-yookve-dark text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-montserrat font-bold text-lg mb-4">Yookve</h3>
-              <p className="text-gray-400 text-sm">Yookve è una piattaforma innovativa che propone pacchetti di vacanza personalizzati in base alle preferenze dei viaggiatori.</p>
-              <div className="mt-4 flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <i className="fab fa-facebook-f"></i>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <i className="fab fa-instagram"></i>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white">
-                  <i className="fab fa-linkedin-in"></i>
-                </a>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-montserrat font-bold text-lg mb-4">Destinazioni</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Roma</a></li>
-                <li><a href="#" className="hover:text-white">Firenze</a></li>
-                <li><a href="#" className="hover:text-white">Venezia</a></li>
-                <li><a href="#" className="hover:text-white">Milano</a></li>
-                <li><a href="#" className="hover:text-white">Costiera Amalfitana</a></li>
-                <li><a href="#" className="hover:text-white">Toscana</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-montserrat font-bold text-lg mb-4">Servizi</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Pacchetti personalizzati</a></li>
-                <li><a href="#" className="hover:text-white">Esperienze locali</a></li>
-                <li><a href="#" className="hover:text-white">Transfer e trasporti</a></li>
-                <li><a href="#" className="hover:text-white">Guide turistiche</a></li>
-                <li><a href="#" className="hover:text-white">Assistenza viaggiatori</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-montserrat font-bold text-lg mb-4">Contatti</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li className="flex items-center">
-                  <i className="fas fa-map-marker-alt w-5"></i> Via Roma 123, Milano
-                </li>
-                <li className="flex items-center">
-                  <i className="fas fa-phone w-5"></i> +39 02 1234567
-                </li>
-                <li className="flex items-center">
-                  <i className="fas fa-envelope w-5"></i> info@yookve.it
-                </li>
-              </ul>
-              <div className="mt-4">
-                <h4 className="font-montserrat font-semibold text-sm mb-2">Iscriviti alla newsletter</h4>
-                <div className="flex">
-                  <input type="email" placeholder="La tua email" className="px-4 py-2 w-full bg-gray-700 text-white rounded-l-md focus:outline-none" />
-                  <button className="bg-yookve-red px-4 py-2 rounded-r-md">
-                    <i className="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-12 pt-8 border-t border-gray-700 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Yookve. Tutti i diritti riservati.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default MainLayout;
+                      <Link href="/bookings">Le mie prenotazioni</s
