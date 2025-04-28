@@ -33,6 +33,6 @@ export default function App() {
           <Toaster /> {/* Toaster moved inside MainLayout */}
         </MainLayout>
       </QueryClientProvider>
-    </AuthProvider> {/* Closed AuthProvider */}
+    </AuthProvider>
   );
 }
