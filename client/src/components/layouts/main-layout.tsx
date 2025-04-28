@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/ui/logo";
-import { useAuth } from "../../hooks/use-auth"; // Changed to relative import
+// Rimuoviamo l'import di useAuth se non è necessario direttamente nel layout
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,16 +16,9 @@ interface MainLayoutProps {
 }
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
-  const { user, logout } = useAuth();
   const [location] = useLocation();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+  // Removed useAuth related code
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -91,38 +84,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="hover:text-gray-300">
-                      <UserRound className="h-5 w-5" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <Link href="/profilo">Il mio profilo</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/preferences">Le mie preferenze</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/results">I miei pacchetti</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/bookings">Le mie prenotazioni</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout}>
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link href="/auth">
-                  <Button variant="ghost" className="hover:text-gray-300 p-0">
-                    <UserRound className="h-5 w-5" />
-                  </Button>
-                </Link>
-              )}
+              {/* Removed user authentication related conditional rendering */}
               <Link href="/carrello" className="hover:text-gray-300">
                 <ShoppingCart className="h-5 w-5" />
               </Link>
@@ -159,7 +121,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                 </a>
               </div>
             </div>
-            
+
             <div>
               <h3 className="font-montserrat font-bold text-lg mb-4">Destinazioni</h3>
               <ul className="space-y-2 text-gray-400">
@@ -171,7 +133,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                 <li><a href="#" className="hover:text-white">Toscana</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-montserrat font-bold text-lg mb-4">Servizi</h3>
               <ul className="space-y-2 text-gray-400">
@@ -182,7 +144,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
                 <li><a href="#" className="hover:text-white">Assistenza viaggiatori</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h3 className="font-montserrat font-bold text-lg mb-4">Contatti</h3>
               <ul className="space-y-2 text-gray-400">
@@ -207,7 +169,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-12 pt-8 border-t border-gray-700 text-center text-sm text-gray-500">
             <p>© {new Date().getFullYear()} Yookve. Tutti i diritti riservati.</p>
           </div>
