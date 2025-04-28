@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useContext } from "react";
 import { login as apiLogin, logout as apiLogout, getUser } from '@/lib/api';
+import { useMutation } from "@tanstack/react-query";
 
 // Define the shape of the user object
 export interface User {
@@ -16,6 +17,8 @@ interface AuthContextType {
   error: Error | null;
   login: (username: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
+  loginMutation: any;
+  registerMutation: any;
 }
 
 // Create the context with a default undefined value
@@ -27,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
 
-  console.log('AuthProvider rendering'); // Log added
+  console.log('AuthProvider rendering');
 
   React.useEffect(() => {
     // Check if user is already logged in on component mount
@@ -53,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const response = await apiLogin(username, password);
-      const userData = response.data.user;
+      const userData = response.data.user || response.data;
       setUser(userData);
       return userData;
     } catch (err) {
@@ -80,15 +83,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Mutations per login e registrazione
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: { username: string; password: string }) => {
+      return login(credentials.username, credentials.password);
+    }
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: async (userData: any) => {
+      // Qui dovrebbe esserci una chiamata API per la registrazione
+      // Per ora, facciamo finta di chiamare login dopo una registrazione con successo
+      return login(userData.username, userData.password);
+    }
+  });
+
   const value = {
     user,
     isLoading,
     error,
     login,
-    logout
+    logout,
+    loginMutation,
+    registerMutation
   };
 
-  console.log('AuthContext value:', value); // Log added
+  console.log('AuthContext value:', value);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
