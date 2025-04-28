@@ -172,7 +172,7 @@ export default function PreferenceForm() {
             siti_archeologici: data.passioni.includes("archeologia"),
             monumenti_e_architettura: data.passioni.includes("architettura")
           },
-          "Food_&_wine": {
+          Food_&_wine: {
             visite_alle_cantine: data.passioni.includes("cantine"),
             corsi_di_cucina: data.passioni.includes("corsi_cucina"),
             soggiorni_nella_wine_country: data.passioni.includes("wine_country")
@@ -199,26 +199,50 @@ export default function PreferenceForm() {
       };
 
       // Importa la funzione di ricerca
-      const { searchAccommodations } = await import("@/lib/api");
+      const { searchAccommodations, savePreferences } = await import("@/lib/api");
       
-      // Invia la richiesta all'API
+      // Prima salva le preferenze localmente per riferimento futuro
+      await savePreferences({
+        email: data.email,
+        preferences: formattedData
+      });
+      
+      // Poi invia la richiesta all'API esterna
+      toast({
+        title: "Ricerca in corso",
+        description: "Stiamo inviando la tua richiesta di viaggio...",
+      });
+      
       const response = await searchAccommodations(formattedData);
       
       // Mostra un toast di successo
       toast({
-        title: "Preferenze inviate",
-        description: "Le tue preferenze sono state inviate con successo. Job ID: " + response.job_id,
+        title: "Ricerca avviata",
+        description: "La tua richiesta è stata inviata con successo. Job ID: " + response.job_id,
       });
 
-      // Reindirizza alla home dopo l'invio
+      // Reindirizza alla pagina dei risultati dopo l'invio
       setTimeout(() => navigate(`/results?jobId=${response.job_id}`), 2000);
     } catch (error) {
       console.error("Errore durante l'invio del form:", error);
       
       // Mostra un toast di errore
+      let errorMessage = "Si è verificato un errore durante l'invio delle preferenze.";
+      
+      if (error.response) {
+        // Se l'errore proviene dall'API esterna, mostriamo il messaggio specifico
+        if (error.response.data?.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (error.response.status === 401) {
+          errorMessage = "Errore di autenticazione con il servizio di ricerca. Riprova più tardi.";
+        } else if (error.response.status === 422) {
+          errorMessage = "Dati non validi. Verifica le informazioni inserite.";
+        }
+      }
+      
       toast({
         title: "Errore",
-        description: "Si è verificato un errore durante l'invio delle preferenze. Riprova più tardi.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
