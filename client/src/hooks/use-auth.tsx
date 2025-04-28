@@ -96,8 +96,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 // Custom hook to use the auth context
 export function useAuth() {
   const context = useContext(AuthContext);
-  console.log('useAuth context:', context); // Log added
+  console.log('useAuth context from use-auth.tsx:', context); // Log migliorato
   if (!context) {
+    console.error("AuthContext not found - AuthProvider might not be wrapping this component");
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

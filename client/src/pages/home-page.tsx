@@ -6,7 +6,14 @@ import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function HomePage() {
-  const { user } = useAuth();
+  let user = null;
+  try {
+    const authData = useAuth();
+    user = authData.user;
+    console.log("HomePage: Auth context trovato", authData);
+  } catch (error) {
+    console.error("HomePage: Errore durante l'utilizzo di useAuth", error);
+  }
 
   return (
     <MainLayout>

@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import Logo from "@/components/ui/logo";
-// Rimuoviamo l'import di useAuth se non è necessario direttamente nel layout
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
