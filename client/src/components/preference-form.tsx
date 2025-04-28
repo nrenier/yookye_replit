@@ -172,7 +172,7 @@ export default function PreferenceForm() {
             siti_archeologici: data.passioni.includes("archeologia"),
             monumenti_e_architettura: data.passioni.includes("architettura")
           },
-          Food_&_wine: {
+          "Food_&_wine": {
             visite_alle_cantine: data.passioni.includes("cantine"),
             corsi_di_cucina: data.passioni.includes("corsi_cucina"),
             soggiorni_nella_wine_country: data.passioni.includes("wine_country")
