@@ -13,27 +13,24 @@ import PreferencesPage from "@/pages/preferences-page";
 import BookingsPage from "@/pages/bookings-page";
 import ResultsPage from "@/pages/results-page";
 import NotFound from "@/pages/not-found";
-import { AuthProvider } from "@/hooks/auth-provider";
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          <MainLayout>
-          <Route path="/" component={HomePage} />
-          <Route path="/auth" component={AuthPage} />
-          <Route path="/packages/:id" component={PackageDetailPage} />
-          <Route path="/preferences" component={PreferencesPage} />
-          <Route path="/results" component={ResultsPage} />
-          <Route path="/bookings">
-            <ProtectedRoute path="/bookings" component={BookingsPage} />
-          </Route>
-          <Route component={NotFound} />
-        </MainLayout>
-        <Toaster />
-      </Router>
-    </AuthProvider>
+      <Router>
+        <MainLayout>
+        <Route path="/" component={HomePage} />
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/packages/:id" component={PackageDetailPage} />
+        <Route path="/preferences" component={PreferencesPage} />
+        <Route path="/results" component={ResultsPage} />
+        <Route path="/bookings">
+          <ProtectedRoute path="/bookings" component={BookingsPage} />
+        </Route>
+        <Route component={NotFound} />
+      </MainLayout>
+      <Toaster />
+    </Router>
     </QueryClientProvider>
   );
 }
