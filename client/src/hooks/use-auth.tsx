@@ -27,6 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
 
+  console.log('AuthProvider rendering'); // Log added
+
   React.useEffect(() => {
     // Check if user is already logged in on component mount
     const checkAuthStatus = async () => {
@@ -86,12 +88,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout
   };
 
+  console.log('AuthContext value:', value); // Log added
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 // Custom hook to use the auth context
 export function useAuth() {
   const context = useContext(AuthContext);
+  console.log('useAuth context:', context); // Log added
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
